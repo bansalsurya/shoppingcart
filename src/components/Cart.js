@@ -22,13 +22,35 @@ const addQuant = (dataset) => {
 };
 export default function Cart() {
   //introduce quantity
-  const newData = addQuant(data);
+  let newData = addQuant(data);
   const [list, setList] = useState(newData);
   const [items, setItems] = useState(newData.length);
   const [total, setTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [typediscount, setTypediscount] = useState(0);
   const [ordertotal, setOrdertotal] = useState(0);
+  const [change, setChange] = useState(false);
+
+  useEffect(() => {
+    setDiscount(0);
+    setTypediscount(0);
+    setOrdertotal(0);
+    list.map((ele, i) => {
+      setTotal((prev) => prev + ele.price * ele.quantity);
+      setDiscount(
+        (prev) => prev + (ele.discount / 100) * ele.price * ele.quantity
+      );
+      if (ele.type === "fiction") {
+        setTypediscount((prev) => prev + 0.15 * ele.price * ele.quantity);
+      }
+      setOrdertotal((prev) => prev + total - discount - typediscount);
+      return i;
+    });
+  }, [change]);
+
+  useEffect(() => {
+    setOrdertotal((prev) => prev + total - discount - typediscount);
+  }, [total, discount, typediscount]);
 
   const List = ({ list, setList, setItems }) => {
     if (list.length === 0) return <div>No Items</div>;
@@ -41,13 +63,8 @@ export default function Cart() {
           setList={setList}
           setItems={setItems}
           list={list}
-          setTotal={setTotal}
-          setDiscount={setDiscount}
-          setTypediscount={setTypediscount}
-          setOrdertotal={setOrdertotal}
-          total={total}
-          discount={discount}
-          typediscount={typediscount}
+          change={change}
+          setChange={setChange}
         />
       );
     });
@@ -58,6 +75,18 @@ export default function Cart() {
       <div className="row">
         <div className="col-8">
           <h2>Order Summary</h2>
+          {items === 0 && (
+            <button
+              style={{ border: "none", cursor: "pointer" }}
+              onClick={() => {
+                newData = addQuant(data);
+                setList(newData);
+                window.location.reload(false);
+              }}
+            >
+              Reload
+            </button>
+          )}
           <ColoredLine color="#000000" />
           <div className="row">
             <div className="col-7 col-s-7">Items({items})</div>

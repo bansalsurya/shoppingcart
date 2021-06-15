@@ -1,18 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const ListItem = ({
-  value,
-  setList,
-  setItems,
-  list,
-  setTotal,
-  setDiscount,
-  setTypediscount,
-  setOrdertotal,
-  total,
-  discount,
-  typediscount,
-}) => {
+const ListItem = ({ value, setList, setItems, list, change, setChange }) => {
   const [price, setPrice] = useState(value.price);
 
   const deleteItem = (list, id) => {
@@ -29,6 +17,7 @@ const ListItem = ({
       console.log(list.splice(index, 1));
     }
     setItems(list.length);
+    setChange(false);
     return list;
   };
 
@@ -40,6 +29,7 @@ const ListItem = ({
       }
       return i;
     });
+    setChange(false);
     return list;
   };
 
@@ -51,25 +41,8 @@ const ListItem = ({
       }
       return i;
     });
+    setChange(false);
     return list;
-  };
-
-  const changeBill = (list) => {
-    setTotal(0);
-    setDiscount(0);
-    setTypediscount(0);
-    setOrdertotal(0);
-    list.map((ele, i) => {
-      setTotal((prev) => prev + ele.price * ele.quantity);
-      setDiscount(
-        (prev) => prev + (ele.discount / 100) * ele.price * ele.quantity
-      );
-      if (ele.type === "fiction") {
-        setTypediscount((prev) => prev + 0.15 * ele.price * ele.quantity);
-      }
-      setOrdertotal((prev) => prev + total - discount - typediscount);
-      return i;
-    });
   };
 
   return (
@@ -84,9 +57,9 @@ const ListItem = ({
             <button
               style={{ border: "none", background: "none", cursor: "pointer" }}
               onClick={() => {
+                setChange(true);
                 list = deleteItem(list, value.id);
-                setList(list);
-                return changeBill(list);
+                return setList(list);
               }}
             >
               X
@@ -100,9 +73,9 @@ const ListItem = ({
             <button
               style={{ border: "none", background: "none", cursor: "pointer" }}
               onClick={() => {
+                setChange(true);
                 list = decreaseQuantity(list, value.id);
-                setList(list);
-                return changeBill(list);
+                return setList(list);
               }}
             >
               -
@@ -113,9 +86,9 @@ const ListItem = ({
             <button
               style={{ border: "none", background: "none", cursor: "pointer" }}
               onClick={() => {
+                setChange(true);
                 list = increaseQuantity(list, value.id);
-                setList(list);
-                return changeBill(list);
+                return setList(list);
               }}
             >
               +
