@@ -29,24 +29,43 @@ export default function Cart() {
   const [discount, setDiscount] = useState(0);
   const [typediscount, setTypediscount] = useState(0);
   const [ordertotal, setOrdertotal] = useState(0);
-  const [change, setChange] = useState(false);
 
   useEffect(() => {
-    setDiscount(0);
-    setTypediscount(0);
-    setOrdertotal(0);
-    list.map((ele, i) => {
-      setTotal((prev) => prev + ele.price * ele.quantity);
-      setDiscount(
-        (prev) => prev + (ele.discount / 100) * ele.price * ele.quantity
-      );
-      if (ele.type === "fiction") {
-        setTypediscount((prev) => prev + 0.15 * ele.price * ele.quantity);
-      }
-      setOrdertotal((prev) => prev + total - discount - typediscount);
-      return i;
-    });
-  }, [change]);
+    const changeTotal = (list) => {
+      let newtotal = 0;
+      list.map((ele, i) => {
+        newtotal += ele.price * ele.quantity;
+        return i;
+      });
+      return newtotal;
+    };
+    const changeDiscount = (list) => {
+      let newdiscount = 0;
+
+      list.map((ele, i) => {
+        newdiscount += (ele.discount / 100) * ele.price * ele.quantity;
+        return i;
+      });
+      return newdiscount;
+    };
+    const changeTypeDiscount = (list) => {
+      let newtypediscount = 0;
+
+      list.map((ele, i) => {
+        if (ele.type === "fiction") {
+          newtypediscount += 0.15 * ele.price * ele.quantity;
+        }
+        return i;
+      });
+      return newtypediscount;
+    };
+
+    return () => {
+      setTotal(changeTotal(list));
+      setDiscount(changeDiscount(list));
+      setTypediscount(changeTypeDiscount(list));
+    };
+  }, [list]);
 
   useEffect(() => {
     setOrdertotal((prev) => prev + total - discount - typediscount);
@@ -63,8 +82,6 @@ export default function Cart() {
           setList={setList}
           setItems={setItems}
           list={list}
-          change={change}
-          setChange={setChange}
         />
       );
     });

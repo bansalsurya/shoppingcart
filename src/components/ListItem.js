@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-const ListItem = ({ value, setList, setItems, list, change, setChange }) => {
+const ListItem = ({ value, setList, setItems, list }) => {
   const [price, setPrice] = useState(value.price);
 
   const deleteItem = (list, id) => {
@@ -16,32 +16,35 @@ const ListItem = ({ value, setList, setItems, list, change, setChange }) => {
     if (index > -1) {
       console.log(list.splice(index, 1));
     }
+    setList(list);
     setItems(list.length);
-    setChange(false);
     return list;
   };
 
   const increaseQuantity = (list, id) => {
     list.map((ele, i) => {
       if (ele.id === id) {
-        ele.quantity++;
+        ++ele.quantity;
+        setList(list);
         setPrice(ele.quantity * ele.price);
+        return list;
       }
       return i;
     });
-    setChange(false);
     return list;
   };
 
   const decreaseQuantity = (list, id) => {
     list.map((ele, i) => {
       if (ele.id === id && ele.quantity > 1) {
-        ele.quantity--;
+        --ele.quantity;
+        setList(list);
         setPrice(ele.quantity * ele.price);
+        return list;
       }
       return i;
     });
-    setChange(false);
+
     return list;
   };
 
@@ -57,9 +60,7 @@ const ListItem = ({ value, setList, setItems, list, change, setChange }) => {
             <button
               style={{ border: "none", background: "none", cursor: "pointer" }}
               onClick={() => {
-                setChange(true);
-                list = deleteItem(list, value.id);
-                return setList(list);
+                deleteItem(list, value.id);
               }}
             >
               X
@@ -73,9 +74,7 @@ const ListItem = ({ value, setList, setItems, list, change, setChange }) => {
             <button
               style={{ border: "none", background: "none", cursor: "pointer" }}
               onClick={() => {
-                setChange(true);
-                list = decreaseQuantity(list, value.id);
-                return setList(list);
+                const newlist = decreaseQuantity(list, value.id);
               }}
             >
               -
@@ -86,9 +85,7 @@ const ListItem = ({ value, setList, setItems, list, change, setChange }) => {
             <button
               style={{ border: "none", background: "none", cursor: "pointer" }}
               onClick={() => {
-                setChange(true);
-                list = increaseQuantity(list, value.id);
-                return setList(list);
+                const newlist = increaseQuantity(list, value.id);
               }}
             >
               +
