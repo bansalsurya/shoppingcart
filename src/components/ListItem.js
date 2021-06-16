@@ -80,7 +80,7 @@ const ListItem = ({ value, setList, setItems, list }) => {
               -
             </button>
           </div>
-          <div className="col-6 col-s-5">{value.name}</div>
+          <div className="col-6 col-s-5">{value.quantity}</div>
           <div className="col-3 col-s-3">
             <button
               style={{ border: "none", background: "none", cursor: "pointer" }}
